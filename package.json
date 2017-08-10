@@ -1,0 +1,13 @@
+{
+  "name": "Smart-Bulb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Sintho",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "tplink-lightbulb": "^1.1.7"
+  }
+}
