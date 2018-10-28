@@ -1,0 +1,5 @@
+{
+    "bulb": "##HOSTNAME",
+    "host": "##IP",
+    "port": "##PORT"
+}

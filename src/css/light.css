@@ -1,0 +1,304 @@
+body {
+	background-color: dimgrey;
+	margin: 0;
+	text-align: center;
+}
+html,
+body {
+	height: 100%;
+}
+h1 {
+	color: #b48608;
+	font-family: 'Droid serif', serif;
+	font-size: 45px;
+	font-weight: 400;
+	font-style: italic;
+	line-height: 44px;
+	margin: 0 0 12px;
+	text-align: center;
+}
+
+/*for powerbutton*/
+
+@font-face {
+	font-family: 'iec_symbols_unicoderegular';
+	src: url('Unicode_IEC_symbol.eot');
+	src: url('Unicode_IEC_symbol.eot?#iefix') format('embedded-opentype'), url('Unicode_IEC_symbol.woff2') format('woff2'), url('Unicode_IEC_symbol.woff') format('woff'), url('Unicode_IEC_symbol.ttf') format('truetype'), url('Unicode_IEC_symbol.svg#iec_symbols_unicoderegular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+.iec_power {
+	font-family: 'iec_symbols_unicoderegular';
+	font-style: normal;
+}
+.powerButtonGreen {
+	box-shadow: inset 0px 1px 0px 0px #9acc85;
+	background: linear-gradient(to bottom, #74ad5a 5%, #68a54b 100%);
+	background-color: #74ad5a;
+	border: 1px solid #3b6e22;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 50px;
+	font-weight: bold;
+	padding: 6px 12px;
+	text-decoration: none;
+	width: 200px;
+}
+.powerButtonGreen:hover {
+	background: linear-gradient(to bottom, #68a54b 5%, #74ad5a 100%);
+	background-color: #68a54b;
+}
+.powerButtonGreen:active {
+	position: relative;
+	top: 1px;
+}
+.powerButtonRed {
+	box-shadow: inset 0px 1px 0px 0px #cf866c;
+	background: linear-gradient(to bottom, #d0451b 5%, #bc3315 100%);
+	background-color: #d0451b;
+	border-radius: 3px;
+	border: 1px solid #942911;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 50px;
+	font-weight: bold;
+	padding: 6px 12px;
+	text-decoration: none;
+	width: 200px;
+}
+.powerButtonRed:hover {
+	background: linear-gradient(to bottom, #bc3315 5%, #d0451b 100%);
+	background-color: #bc3315;
+}
+.powerButtonRed:active {
+	position: relative;
+	top: 1px;
+}
+
+/*for tabs*/
+
+#tabs {
+	display: none;
+	flex-direction: row;
+	width: 100%;
+	height: 80px;
+}
+.tabButton {
+	box-shadow: inset 0px 1px 0px 0px #7a8eb9;
+	background: linear-gradient(to bottom, #637aad 5%, #5972a7 100%);
+	background-color: #637aad;
+	border: 1px solid #314179;
+	cursor: pointer;
+	/*color: #ffffff;*/
+	/*	font-family: Arial;*/
+	font-size: 40px;
+	/*font-weight: bold;*/
+	padding: 6px 12px;
+	text-decoration: none;
+	width: 100%;
+	color: #b48608;
+	font-family: 'Droid serif', serif;
+	/*font-size: 20px;*/
+	/*font-weight: 400;*/
+	font-style: italic;
+}
+.tabButton:hover {
+	background: linear-gradient(to bottom, #5972a7 5%, #637aad 100%);
+	background-color: #5972a7;
+}
+.tabButton:active {
+	position: relative;
+	top: 1px;
+}
+
+/*wrapping the tabs into a flex layout*/
+
+#containerWrapper {
+	display: inline-flex;
+	justify-content: center;
+	padding: 0;
+	margin: 0;
+}
+
+/*loading tab*/
+
+#initTab {
+	width: 1px;
+	height: 1px;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+}
+.spinner {
+	margin: 100px auto 0;
+	width: 70px;
+	text-align: center;
+}
+.spinner > div {
+	width: 18px;
+	height: 18px;
+	background-color: #333;
+	border-radius: 100%;
+	display: inline-block;
+	animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+.spinner .bounce1 {
+	animation-delay: -0.32s;
+}
+.spinner .bounce2 {
+	animation-delay: -0.16s;
+}
+@keyframes sk-bouncedelay {
+	0%,
+	80%,
+	100% {
+		transform: scale(0);
+	}
+	40% {
+		transform: scale(1.0);
+	}
+}
+
+/*light tabs*/
+
+#whiteLightWrapper,
+#colorLightWrapper {
+	display: inline-flex;
+	flex-direction: row;
+}
+#whiteLightContainer,
+#colorLightContainer {
+	display: none;
+	flex-direction: column;
+}
+#whiteLightColorTemp,
+#whiteLightBrightness,
+#colorLight,
+#colorWheel {
+	flex-direction: column;
+	display: inline-flex;
+	align-items: center;
+}
+#whiteLightColorTemp,
+#whiteLightBrightness,
+#colorLight {
+	max-width: 400px;
+	max-height: 400px;
+	width: 400px;
+	height: 400px;
+}
+
+/*text labels*/
+
+.bulbLabel {
+	color: #b48608;
+	font-family: 'Droid serif', serif;
+	font-size: 20px;
+	font-weight: 400;
+	font-style: bold;
+}
+
+/*input range slider*/
+
+input[type=range] {
+	/*removes default webkit styles*/
+	-webkit-appearance: none;
+	/*required for proper track sizing in FF*/
+	width: 300px;
+}
+input[type=range]::-webkit-slider-runnable-track {
+	width: 300px;
+	height: 5px;
+	background: #ddd;
+	border: none;
+	border-radius: 3px;
+}
+input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	border: none;
+	height: 25px;
+	width: 25px;
+	border-radius: 50%;
+	background: goldenrod;
+	margin-top: -10px;
+}
+input[type=range]:focus {
+	outline: none;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+	background: #ccc;
+}
+input[type=range]::-moz-range-track {
+	width: 300px;
+	height: 5px;
+	background: #ddd;
+	border: none;
+	border-radius: 3px;
+}
+input[type=range]::-moz-range-thumb {
+	border: none;
+	height: 25px;
+	width: 25px;
+	border-radius: 50%;
+	background: goldenrod;
+}
+input[type=range]:-moz-focusring {
+	outline-offset: -1px;
+}
+.slider-space {
+	min-height: 10px;
+}
+
+/*text inputs*/
+
+input[type='text'] {
+	border-radius: 50px;
+	text-align: center;
+	color: #b48608;
+	font-family: 'Droid serif', serif;
+	font-size: 20px;
+	font-weight: 400;
+	font-style: bold;
+	background-color: black;
+}
+
+/*save button*/
+/*
+.saveButton {
+	background-color: #74ad5a;
+	background: linear-gradient(to bottom, #74ad5a 5%, #68a54b 100%);
+	border: 1px solid #3b6e22;
+}
+.saveButton,
+.disabledSaveButton {
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: 'Droid serif', serif;
+	font-size: 17px;
+	font-weight: bold;
+	padding: 6px 12px;
+	text-decoration: none;
+	width: 100%;
+	height: 50px;
+	margin-top: 10px;
+}
+.saveButton:hover {
+	background: linear-gradient(to bottom, #68a54b 5%, #74ad5a 100%);
+	background-color: #68a54b;
+}
+.saveButton:active {
+	position: relative;
+	top: 1px;
+}
+.disabledSaveButton {
+	background-color: grey;
+}
+*/
