@@ -1,75 +1,4 @@
-/*
- * hex codes for color temperature
- * calculated by using the algorithm from http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
- */
-const colorTempToHex = {
-    2500: '#FF9F46',
-    2600: '#FFA34F',
-    2700: '#FFA757',
-    2800: '#FFAA5F',
-    2900: '#FFAE67',
-    3000: '#FFB16E',
-    3100: '#FFB475',
-    3200: '#FFB87B',
-    3300: '#FFBB81',
-    3400: '#FFBE87',
-    3500: '#FFC18D',
-    3600: '#FFC392',
-    3700: '#FFC697',
-    3800: '#FFC99D',
-    3900: '#FFCBA1',
-    4000: '#FFCEA6',
-    4100: '#FFD0AB',
-    4200: '#FFD3AF',
-    4300: '#FFD5B3',
-    4400: '#FFD7B7',
-    4500: '#FFDABB',
-    4600: '#FFDCBF',
-    4700: '#FFDEC3',
-    4800: '#FFE0C7',
-    4900: '#FFE2CA',
-    5000: '#FFE4CE',
-    5100: '#FFE6D1',
-    5200: '#FFE8D5',
-    5300: '#FFEAD8',
-    5400: '#FFECDB',
-    5500: '#FFEDDE',
-    5600: '#FFEFE1',
-    5700: '#FFF1E4',
-    5800: '#FFF3E7',
-    5900: '#FFF4EA',
-    6000: '#FFF6ED',
-    6100: '#FFF8F0',
-    6200: '#FFF9F2',
-    6300: '#FFFBF5',
-    6400: '#FFFDF8',
-    6500: '#FFFEFA',
-    6600: '#FFFFFF',
-    6700: '#FEF9FF',
-    6800: '#FAF6FF',
-    6900: '#F6F4FF',
-    7000: '#F3F2FF',
-    7100: '#F0F0FF',
-    7200: '#EDEFFF',
-    7300: '#EAEDFF',
-    7400: '#E8ECFF',
-    7500: '#E6EBFF',
-    7600: '#E4EAFF',
-    7700: '#E2E9FF',
-    7800: '#E0E8FF',
-    7900: '#DFE7FF',
-    8000: '#DDE6FF',
-    8100: '#DCE5FF',
-    8200: '#DAE4FF',
-    8300: '#D9E3FF',
-    8400: '#D8E3FF',
-    8500: '#D7E2FF',
-    8600: '#D6E1FF',
-    8700: '#D5E1FF',
-    8800: '#D4E0FF',
-    8900: '#D3DFFF',
-    9000: '#D2DFFF'
-};
+import colorTempToHex from './ColorTempHex';
 
 /**
  * @description LB130-Lightbulb Class
@@ -91,30 +20,42 @@ class Light {
 
         this.powerButton = document.getElementById('powerButton');
         /* send a power signal to the server*/
-        this.powerButton.addEventListener('click', () => {
-            this.sendXHR('power', 'get', '/light/power');
-            setTimeout(this.updateGuiRequest(), 1000);
+        this.powerButton.addEventListener('click', async () => {
+            await fetch(`${this.url}/light/power`);
+            this.updateGuiRequest();
         });
 
         /*Brightness */
         this.brightnessLight = document.getElementById('whiteLightBrightnessSVG').contentDocument.getElementById('innerBulb');
         this.brightnessSlider = document.getElementById('brightnessSlider');
+        let brightnessSliderTimeOut = null;
         /*adjust the color of the brightnessLight, change value in the box, send update to hardware */
         this.brightnessSlider.addEventListener('input', () => {
             this.brightnessLight.style.fill = `rgba(255, 255, 0, ${this.brightnessSlider.value / 100})`;
             document.getElementById('brightnessBox').value = `${this.brightnessSlider.value}%`;
-            this.updateWhiteLight();
+
+            /*Using timeout to reduce amount of network requests*/
+            clearTimeout(brightnessSliderTimeOut);
+            brightnessSliderTimeOut = setTimeout(() => {
+                this.updateWhiteLight();
+            }, 100);
         });
         this.brightnessBox = document.getElementById('brightnessBox');
 
         /* Color Temperature*/
         this.colorTempLight = document.getElementById('whiteLightColorTempSVG').contentDocument.getElementById('innerBulb');
         this.colorTempSlider = document.getElementById('colorTempSlider');
+        let colorTempSliderTimeOut = null;
         /*adjust color of the colorTempLight, change value in the box, send update to hardware */
         this.colorTempSlider.addEventListener('input', () => {
             this.colorTempLight.style.fill = colorTempToHex[this.colorTempSlider.value];
             document.getElementById('colorTempBox').value = this.colorTempSlider.value;
-            this.updateWhiteLight();
+
+            /*Using timeout to reduce amount of network requests*/
+            clearTimeout(colorTempSliderTimeOut);
+            colorTempSliderTimeOut = setTimeout(() => {
+                this.updateWhiteLight();
+            }, 100);
         });
         this.colorTempBox = document.getElementById('colorTempBox');
 
@@ -128,46 +69,25 @@ class Light {
         this.colorLightButton.addEventListener('click', () => {
             this.showTab('colorLightContainer');
         });
+
+        this.url = `http://${__HOST__}:${__PORT__}`;
+
         this.initColorPicker();
         this.updateGuiRequest();
-        this.refresh();
-    }
-
-    /**
-     * @description handle server response
-     * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {String} event
-     * @param {String/json} response
-     * @memberof Light
-     */
-    asyncHandler(event, response) {
-        let r;
-        try {
-            r = JSON.parse(response);
-        } catch (e) {
-            console.error(response);
-            throw new Error(e);
-        }
-        switch (event) {
-            case 'gui':
-                this.updateGui(r.light_state);
-                break;
-            case 'power':
-                this.updateGuiRequest();
-                break;
-        }
+        setInterval(() => {
+            this.updateGuiRequest();
+        }, 10000);
     }
 
     /**
      * @description enabled / disable elements
      * @author Jan Kaiser
      * @date 2018-09-18
-     * @param {String} state
+     * @param {boolean} enable
      * @memberof Light
      */
-    enableDisableElements(state) {
-        if (state === 'enable') {
+    enableDisableElements(enable) {
+        if (enable) {
             /*enable elements */
             this.powerButton.className = 'powerButtonGreen';
             this.powerButton.setAttribute('state', 'on');
@@ -180,23 +100,6 @@ class Light {
             this.colorTempSlider.disabled = true;
             this.brightnessSlider.disabled = true;
         }
-    }
-
-    /**
-     * @description convert hex to rgb
-     * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {String} hex
-     * @returns {Object}
-     * @memberof Light
-     */
-    hexToRgb(hex) {
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
     }
 
     /**
@@ -255,6 +158,12 @@ class Light {
         };
     }
 
+    /**
+     * @description initializes the canvas element and the color picker for the colored light
+     * @author Jan Kaiser
+     * @date 2018-12-24
+     * @memberof Light
+     */
     initColorPicker() {
         const canvas = document.getElementById('picker');
         const ctx = canvas.getContext('2d');
@@ -268,6 +177,12 @@ class Light {
         // select desired colorwheel
         image.src = 'images/colorwheel.png';
 
+        canvas.addEventListener('mouseenter', (e) => {
+            this.mouseInCanvas = true;
+        });
+        canvas.addEventListener('mouseleave', (e) => {
+            this.mouseInCanvas = false;
+        });
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -293,19 +208,6 @@ class Light {
                 this.updateColorLight();
             }
         });
-    }
-
-    /**
-     * @description Update the UI every 10 seconds
-     * @author Jan Kaiser
-     * @date 2018-09-18
-     * @memberof Light
-     */
-    refresh() {
-        setTimeout(() => {
-            this.updateGuiRequest();
-            this.refresh();
-        }, 10000);
     }
 
     /**
@@ -366,48 +268,6 @@ class Light {
     }
 
     /**
-     * @description send XHR request to the server
-     * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {String} event what needs to be updated in the callback
-     * @param {String} type get/post
-     * @param {String} path on the server we're requesting
-     * @param {Object/null} setup setup of the new light state
-     * @memberof Light
-     */
-    sendXHR(event, type, path, setup) {
-        const url = `http://${__HOST__}:${__PORT__}${path}`;
-        /*const config = {
-            mode: 'no-cors'
-        };
-        if (setup) {
-            config.method = type;
-            config.headers = {
-                'Content-Type': 'application/json'
-            };
-            config.body = setup;
-        }
-        fetch(url, config)
-            .then(resp => resp.json())
-            .then(data => this.asyncHandler(event, data))
-            .catch(e => { throw new Error(e) });
-    */
-        const req = new XMLHttpRequest();
-        req.open(type, url);
-        req.addEventListener('readystatechange', () => {
-            if (req.readyState === 4) { // done
-                this.asyncHandler(event, req.response);
-            }
-        });
-        if (type === 'post') {
-            req.setRequestHeader('Content-Type', 'application/json');
-            req.send(JSON.stringify(setup));
-        } else {
-            req.send();
-        }
-    }
-
-    /**
      * @description display a specific tab
      * @author Jan Kaiser
      * @date 2018-09-18
@@ -431,7 +291,7 @@ class Light {
      * @date 2018-09-18
      * @memberof Light
      */
-    updateColorLight() {
+    async updateColorLight() {
         const hsv = this.RGBtoHSV(parseInt(document.getElementById('rVal').value, 10), parseInt(document.getElementById('gVal').value, 10), parseInt(document.getElementById('bVal').value, 10));
         const packet = {
             mode: 'normal',
@@ -440,7 +300,16 @@ class Light {
             color_temp: 0,
             brightness: Math.round(hsv.v * 100)
         };
-        this.sendXHR('setLight', 'post', '/light/mode', packet);
+
+        const config = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(packet)
+        };
+        const data = await (await fetch(`${this.url}/light/mode`, config)).json();
+        this.updateGui(data['smartlife.iot.smartbulb.lightingservice'].transition_light_state);
     }
 
     /**
@@ -466,9 +335,9 @@ class Light {
 
         /* enabled/disable elements based on light state*/
         if (response.on_off === 0) {
-            this.enableDisableElements('disable');
+            this.enableDisableElements(false);
         } else {
-            this.enableDisableElements('enable');
+            this.enableDisableElements(true);
         }
 
         /* update the gui for the temperature light*/
@@ -484,17 +353,19 @@ class Light {
         this.brightnessSlider.value = brightness;
         this.brightnessLight.style.fill = `rgba(255, 255, 0, ${brightness / 100})`;
 
-        /*update the gui for the color light */
-        const hue = (response.hue !== undefined) ? response.hue : response.dft_on_state.hue;
-        const saturation = (response.saturation !== undefined) ? response.saturation : response.dft_on_state.saturation;
-        const rgb = this.HSVtoRGB(hue / 360, saturation / 100, brightness / 100);
-        document.getElementById('rVal').value = rgb.r;
-        document.getElementById('gVal').value = rgb.g;
-        document.getElementById('bVal').value = rgb.b;
-        document.getElementById('rgbVal').value = `${rgb.r},${rgb.g},${rgb.b}`;
-        const hex = this.rgbToHex(rgb.r, rgb.g, rgb.b);
-        document.getElementById('hexVal').value = hex;
-        this.colorLight.style.fill = hex;
+        /*update the gui for the color light only when the mouse is not inside the canvas*/
+        if (!this.mouseInCanvas) {
+            const hue = (response.hue !== undefined) ? response.hue : response.dft_on_state.hue;
+            const saturation = (response.saturation !== undefined) ? response.saturation : response.dft_on_state.saturation;
+            const rgb = this.HSVtoRGB(hue / 360, saturation / 100, brightness / 100);
+            document.getElementById('rVal').value = rgb.r;
+            document.getElementById('gVal').value = rgb.g;
+            document.getElementById('bVal').value = rgb.b;
+            document.getElementById('rgbVal').value = `${rgb.r},${rgb.g},${rgb.b}`;
+            const hex = this.rgbToHex(rgb.r, rgb.g, rgb.b);
+            document.getElementById('hexVal').value = hex;
+            this.colorLight.style.fill = hex;
+        }
     }
 
     /**
@@ -503,8 +374,9 @@ class Light {
      * @date 2018-09-18
      * @memberof Light
      */
-    updateGuiRequest() {
-        this.sendXHR('gui', 'get', '/light/info');
+    async updateGuiRequest() {
+        const data = await (await fetch(`${this.url}/light/info`)).json();
+        this.updateGui(data.light_state);
     }
 
     /**
@@ -513,7 +385,7 @@ class Light {
      * @date 2018-09-18
      * @memberof Light
      */
-    updateWhiteLight() {
+    async updateWhiteLight() {
         const packet = {
             mode: 'normal',
             hue: 0,
@@ -521,10 +393,19 @@ class Light {
             color_temp: this.colorTempSlider.value,
             brightness: this.brightnessSlider.value
         };
-        this.sendXHR('setLight', 'post', '/light/mode', packet);
+
+        const config = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(packet)
+        };
+        const data = await (await fetch(`${this.url}/light/mode`, config)).json();
+        this.updateGui(data['smartlife.iot.smartbulb.lightingservice'].transition_light_state);
     }
 }
 
 window.onload = () => {
-    (() => new Light())();
+    window.light = new Light();
 };
