@@ -50,4 +50,3 @@ node_modules/
 .vscode/
 
 dist/
-config.json
