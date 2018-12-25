@@ -28,36 +28,36 @@ class Light {
         /*Brightness */
         this.brightnessLight = document.getElementById('whiteLightBrightnessSVG').contentDocument.getElementById('innerBulb');
         this.brightnessSlider = document.getElementById('brightnessSlider');
+        this.brightnessBox = document.getElementById('brightnessBox');
         let brightnessSliderTimeOut = null;
         /*adjust the color of the brightnessLight, change value in the box, send update to hardware */
         this.brightnessSlider.addEventListener('input', () => {
             this.brightnessLight.style.fill = `rgba(255, 255, 0, ${this.brightnessSlider.value / 100})`;
-            document.getElementById('brightnessBox').value = `${this.brightnessSlider.value}%`;
+            this.brightnessBox.value = `${this.brightnessSlider.value}%`;
 
             /*Using timeout to reduce amount of network requests*/
             clearTimeout(brightnessSliderTimeOut);
             brightnessSliderTimeOut = setTimeout(() => {
                 this.updateWhiteLight();
-            }, 100);
+            }, 250);
         });
-        this.brightnessBox = document.getElementById('brightnessBox');
 
         /* Color Temperature*/
         this.colorTempLight = document.getElementById('whiteLightColorTempSVG').contentDocument.getElementById('innerBulb');
         this.colorTempSlider = document.getElementById('colorTempSlider');
+        this.colorTempBox = document.getElementById('colorTempBox');
         let colorTempSliderTimeOut = null;
         /*adjust color of the colorTempLight, change value in the box, send update to hardware */
         this.colorTempSlider.addEventListener('input', () => {
             this.colorTempLight.style.fill = colorTempToHex[this.colorTempSlider.value];
-            document.getElementById('colorTempBox').value = this.colorTempSlider.value;
+            this.colorTempBox.value = this.colorTempSlider.value;
 
             /*Using timeout to reduce amount of network requests*/
             clearTimeout(colorTempSliderTimeOut);
             colorTempSliderTimeOut = setTimeout(() => {
                 this.updateWhiteLight();
-            }, 100);
+            }, 250);
         });
-        this.colorTempBox = document.getElementById('colorTempBox');
 
         this.colorLight = document.getElementById('colorLightSVG').contentDocument.getElementById('innerBulb');
 
@@ -349,7 +349,7 @@ class Light {
 
         /* update the gui for the brightness light*/
         const brightness = (response.brightness !== undefined) ? response.brightness : response.dft_on_state.brightness;
-        this.brightnessBox.value = brightness;
+        this.brightnessBox.value = `${brightness}%`;
         this.brightnessSlider.value = brightness;
         this.brightnessLight.style.fill = `rgba(255, 255, 0, ${brightness / 100})`;
 
