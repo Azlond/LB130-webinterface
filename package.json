@@ -2,7 +2,7 @@
   "name": "smart-bulb",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "author": "Sintho",
   "license": "MIT",
   "dependencies": {
