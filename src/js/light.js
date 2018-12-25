@@ -9,10 +9,10 @@ import colorTempToHex from './ColorTempHex';
  */
 class Light {
     /**
-     * Creates an instance of Light.
-     * @description initializes variables
+     * @description Creates an instance of Light. Initializes variables
+     *
+     * @example Light();
      * @author Jan Kaiser
-     * @date 2018-09-18
      * @memberof Light
      */
     constructor() {
@@ -21,7 +21,7 @@ class Light {
         this.powerButton = document.getElementById('powerButton');
         /* send a power signal to the server*/
         this.powerButton.addEventListener('click', async () => {
-            await fetch(`${this.url}/light/power`);
+            await fetch(`${this.url}/power`);
             this.updateGuiRequest();
         });
 
@@ -38,7 +38,7 @@ class Light {
             /*Using timeout to reduce amount of network requests*/
             clearTimeout(brightnessSliderTimeOut);
             brightnessSliderTimeOut = setTimeout(() => {
-                this.updateWhiteLight();
+                this.updateLight(false);
             }, 250);
         });
 
@@ -55,7 +55,7 @@ class Light {
             /*Using timeout to reduce amount of network requests*/
             clearTimeout(colorTempSliderTimeOut);
             colorTempSliderTimeOut = setTimeout(() => {
-                this.updateWhiteLight();
+                this.updateLight();
             }, 250);
         });
 
@@ -70,7 +70,7 @@ class Light {
             this.showTab('colorLightContainer');
         });
 
-        this.url = `http://${__HOST__}:${__PORT__}`;
+        this.url = `http://${__HOST__}:${__PORT__}/api/light`;
 
         this.initColorPicker();
         this.updateGuiRequest();
@@ -81,9 +81,10 @@ class Light {
 
     /**
      * @description enabled / disable elements
+     *
+     * @example enableDisableElements(true);
      * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {boolean} enable
+     * @param {boolean} enable - Indicates whether elements should be enabled or disabled.
      * @memberof Light
      */
     enableDisableElements(enable) {
@@ -104,11 +105,12 @@ class Light {
 
     /**
      * @description This code expects 0 <= h, s, v <= 1, if you're using degrees or radians, remember to divide them out.
+     *
+     * @example HSVtoRGB(0.55, 0.95, 0.17);
      * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {Number} h
-     * @param {Number} s
-     * @param {Number} v
+     * @param {number} h - Hue.
+     * @param {number} s - Saturation.
+     * @param {number} v - Value.
      * @returns {Object} The returned 0 <= r, g, b <= 255 are rounded to the nearest Integer. If you don't want this behaviour remove the Math.rounds from the returned object.
      * @memberof Light
      */
@@ -160,8 +162,9 @@ class Light {
 
     /**
      * @description initializes the canvas element and the color picker for the colored light
+     *
+     * @example initColorPicker();
      * @author Jan Kaiser
-     * @date 2018-12-24
      * @memberof Light
      */
     initColorPicker() {
@@ -205,19 +208,20 @@ class Light {
         });
         canvas.addEventListener('click', (e) => {
             if (document.getElementById('powerButton').getAttribute('state') === 'on') {
-                this.updateColorLight();
+                this.updateLight(true);
             }
         });
     }
 
     /**
-     * @description Convert rgb to a hex value
+     * @description Convert rgb to a hex value.
+     *
+     * @example rgbToHex(147, 38, 244);
      * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {Numer} r
-     * @param {Number} g
-     * @param {Number} b
-     * @returns {String} Hex-value
+     * @param {number} r - Red.
+     * @param {number} g - Green.
+     * @param {number} b - Blue.
+     * @returns {string}  - #Hex-value.
      * @memberof Light
      */
     rgbToHex(r, g, b) {
@@ -225,13 +229,14 @@ class Light {
     }
 
     /**
-     * @description This code will output 0 <= h, s, v <= 1, but this time takes any 0 <= r, g, b <= 255 (does not need to be an integer)
+     * @description This code will output 0 <= h, s, v <= 1, but this time takes any 0 <= r, g, b <= 255 (does not need to be an integer).
+     *
+     * @example RGBtoHSV(147, 38, 244);
      * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {Number} r
-     * @param {Number} g
-     * @param {Number} b
-     * @returns Object
+     * @param {number} r - Red.
+     * @param {number} g - Green.
+     * @param {number} b - Blue.
+     * @returns {Object} - {h, s, v}.
      * @memberof Light
      */
     RGBtoHSV(r, g, b) {
@@ -268,10 +273,11 @@ class Light {
     }
 
     /**
-     * @description display a specific tab
+     * @description Display a specific tab.
+     *
+     * @example showTab('colorLightContainer');
      * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {String} tabName name of the tab to display
+     * @param {string} tabName - Name of the tab to display.
      * @memberof Light
      */
     showTab(tabName) {
@@ -286,19 +292,21 @@ class Light {
     }
 
     /**
-     * @description creates the config to update the color light
+     * @description Creates the config to update the light.
+     *
+     * @example updateLight(true);
      * @author Jan Kaiser
-     * @date 2018-09-18
+     * @param {boolean} color - Indicates whether the color or the white light should be updated.
      * @memberof Light
      */
-    async updateColorLight() {
+    async updateLight(color) {
         const hsv = this.RGBtoHSV(parseInt(document.getElementById('rVal').value, 10), parseInt(document.getElementById('gVal').value, 10), parseInt(document.getElementById('bVal').value, 10));
         const packet = {
             mode: 'normal',
-            hue: Math.round(hsv.h * 360),
-            saturation: Math.round(hsv.s * 100),
-            color_temp: 0,
-            brightness: Math.round(hsv.v * 100)
+            hue: color ? Math.round(hsv.h * 360) : 0,
+            saturation: color ? Math.round(hsv.s * 100) : 0,
+            color_temp: color ? 0 : this.colorTempSlider.value,
+            brightness: color ? Math.round(hsv.v * 100) : this.brightnessSlider.value
         };
 
         const config = {
@@ -308,15 +316,16 @@ class Light {
             },
             body: JSON.stringify(packet)
         };
-        const data = await (await fetch(`${this.url}/light/mode`, config)).json();
+        const data = await (await fetch(`${this.url}/mode`, config)).json();
         this.updateGui(data['smartlife.iot.smartbulb.lightingservice'].transition_light_state);
     }
 
     /**
      * @description update the gui whenever a server response is received
+     *
+     * @example updateGui({ 'smartlife.iot.smartbulb.lightingservice': { transition_light_state: { on_off: 1, transition_period: 0 } } });
      * @author Jan Kaiser
-     * @date 2018-09-18
-     * @param {Object} response
+     * @param {Object} response - Object from the tplink-lightbulb service.
      * @memberof Light
      */
     updateGui(response) {
@@ -370,39 +379,14 @@ class Light {
 
     /**
      * @description send an info-request to the light
+     *
+     * @example updateGuiRequest();
      * @author Jan Kaiser
-     * @date 2018-09-18
      * @memberof Light
      */
     async updateGuiRequest() {
-        const data = await (await fetch(`${this.url}/light/info`)).json();
+        const data = await (await fetch(`${this.url}/info`)).json();
         this.updateGui(data.light_state);
-    }
-
-    /**
-     * @description creates the config for the white light
-     * @author Jan Kaiser
-     * @date 2018-09-18
-     * @memberof Light
-     */
-    async updateWhiteLight() {
-        const packet = {
-            mode: 'normal',
-            hue: 0,
-            saturation: 0,
-            color_temp: this.colorTempSlider.value,
-            brightness: this.brightnessSlider.value
-        };
-
-        const config = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(packet)
-        };
-        const data = await (await fetch(`${this.url}/light/mode`, config)).json();
-        this.updateGui(data['smartlife.iot.smartbulb.lightingservice'].transition_light_state);
     }
 }
 

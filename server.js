@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 /*scan for new bulbs*/
-app.get('/light/scan', (req, res) => {
+app.get('/api/light/scan', (req, res) => {
     const scan = Bulb.scan()
         .on('light', (l) => {
             l.power(false)
@@ -34,7 +34,7 @@ app.get('/light/scan', (req, res) => {
         });
 });
 /*request & return current info*/
-app.get('/light/info', (req, res) => {
+app.get('/api/light/info', (req, res) => {
     light.info()
         .then((info) => {
             res.status(200).send(info);
@@ -43,7 +43,7 @@ app.get('/light/info', (req, res) => {
 });
 
 /*turn power on/off*/
-app.get('/light/power', (req, res) => {
+app.get('/api/light/power', (req, res) => {
     light.info()
         .then((info) => {
             const state = (info.light_state.on_off === 1);
@@ -57,7 +57,7 @@ app.get('/light/power', (req, res) => {
 });
 
 /*set the light to the received mode*/
-app.post('/light/mode', (req, res) => {
+app.post('/api/light/mode', (req, res) => {
     const settings = req.body;
     settings.hue = parseInt(settings.hue, 10);
     settings.saturation = parseInt(settings.saturation, 10);
@@ -100,10 +100,12 @@ app.get('/images/*', (req, res) => {
 });
 
 // Express route for any other unrecognised incoming requests
-app.get('*', (req, res) => {
+app.get('/api/*', (req, res) => {
     res.status(404).send('Unrecognised API call');
 });
-
+app.get('*', (req, res) => {
+    res.status(404).send('Unrecognised path');
+});
 // Express route to handle errors
 app.use((err, req, res, next) => {
     if (req.xhr) {
