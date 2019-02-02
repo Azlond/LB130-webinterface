@@ -9,13 +9,14 @@ import colorTempToHex from './ColorTempHex';
  */
 class Light {
     /**
-     * @description Creates an instance of Light. Initializes variables
-     *
-     * @example Light();
+     * @description Creates an instance of Light. Initializes variables.
+     * @param {string} host - Name of the host.
+     * @param {number} port - Number of the port.
+     * @example Light(localhost, 3333);
      * @author Jan Kaiser
      * @memberof Light
      */
-    constructor() {
+    constructor(host, port) {
         this.tabsHidden = true; //state variable for initialization
 
         this.powerButton = document.getElementById('powerButton');
@@ -70,7 +71,7 @@ class Light {
             this.showTab('colorLightContainer');
         });
 
-        this.url = `http://${__HOST__}:${__PORT__}/api/light`;
+        this.url = `http://${host}:${port}/api/light`;
 
         this.initColorPicker();
         this.updateGuiRequest();
@@ -391,5 +392,5 @@ class Light {
 }
 
 window.onload = () => {
-    window.light = new Light();
+    window.light = new Light(__HOST__, __PORT__);
 };
