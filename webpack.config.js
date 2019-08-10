@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-
+const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 const config = require('./config.json');
 
 module.exports = (env, options) => ({
@@ -35,7 +35,8 @@ module.exports = (env, options) => ({
                 removeComments: true,
                 removeRedundantAttributes: true
             }
-        })
+        }),
+        new BaseHrefWebpackPlugin({ baseHref: `https://${config.host}:${config.port}/light` })
     ]
 
 });
