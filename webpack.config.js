@@ -16,14 +16,14 @@ module.exports = (env, options) => ({
             __HOST__: `'${config.host}'`,
             __PORT__: config.port
         }),
-        new CopyWebpackPlugin([{
+        new CopyWebpackPlugin({patterns: [{
             from: './src/css/',
             to: '../css/'
         },
         {
             from: './src/images',
             to: '../images/'
-        }]),
+        }]}),
         new HtmlWebpackPlugin({
             template: './src/index.html',
             filename: '../light.html',
