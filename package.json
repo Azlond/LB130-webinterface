@@ -9,18 +9,18 @@
     "base-href-webpack-plugin": "^2.0.0",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "tplink-lightbulb": "^1.5.1"
+    "tplink-lightbulb": "^1.5.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "copy-webpack-plugin": "^6.0.3",
-    "eslint": "^7.4.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0",
+    "copy-webpack-plugin": "^6.4.0",
+    "eslint": "^7.15.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsdoc": "^29.2.0",
     "html-webpack-plugin": "^3.2.0",
-    "webpack": "^4.43.0",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   },
   "scripts": {
