@@ -2,10 +2,6 @@ import colorTempToHex from './ColorTempHex';
 
 /**
  * @description LB130-Lightbulb Class
- * @author Jan Kaiser
- * @date 2018-09-18
- * @export
- * @class Light
  */
 class Light {
     /**
@@ -13,8 +9,6 @@ class Light {
      * @param {string} host - Name of the host.
      * @param {number} port - Number of the port.
      * @example Light(localhost, 3333);
-     * @author Jan Kaiser
-     * @memberof Light
      */
     constructor(host, port) {
         this.tabsHidden = true; //state variable for initialization
@@ -84,9 +78,7 @@ class Light {
      * @description enabled / disable elements
      *
      * @example enableDisableElements(true);
-     * @author Jan Kaiser
      * @param {boolean} enable - Indicates whether elements should be enabled or disabled.
-     * @memberof Light
      */
     enableDisableElements(enable) {
         if (enable) {
@@ -108,12 +100,10 @@ class Light {
      * @description This code expects 0 <= h, s, v <= 1, if you're using degrees or radians, remember to divide them out.
      *
      * @example HSVtoRGB(0.55, 0.95, 0.17);
-     * @author Jan Kaiser
      * @param {number} h - Hue.
      * @param {number} s - Saturation.
      * @param {number} v - Value.
      * @returns {Object} The returned 0 <= r, g, b <= 255 are rounded to the nearest Integer. If you don't want this behaviour remove the Math.rounds from the returned object.
-     * @memberof Light
      */
     HSVtoRGB(h, s, v) {
         let r; let g; let b;
@@ -165,8 +155,6 @@ class Light {
      * @description initializes the canvas element and the color picker for the colored light
      *
      * @example initColorPicker();
-     * @author Jan Kaiser
-     * @memberof Light
      */
     initColorPicker() {
         const canvas = document.getElementById('picker');
@@ -218,12 +206,10 @@ class Light {
      * @description Convert rgb to a hex value.
      *
      * @example rgbToHex(147, 38, 244);
-     * @author Jan Kaiser
      * @param {number} r - Red.
      * @param {number} g - Green.
      * @param {number} b - Blue.
      * @returns {string}  - #Hex-value.
-     * @memberof Light
      */
     rgbToHex(r, g, b) {
         return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
@@ -233,12 +219,10 @@ class Light {
      * @description This code will output 0 <= h, s, v <= 1, but this time takes any 0 <= r, g, b <= 255 (does not need to be an integer).
      *
      * @example RGBtoHSV(147, 38, 244);
-     * @author Jan Kaiser
      * @param {number} r - Red.
      * @param {number} g - Green.
      * @param {number} b - Blue.
      * @returns {Object} - {h, s, v}.
-     * @memberof Light
      */
     RGBtoHSV(r, g, b) {
         const max = Math.max(r, g, b);
@@ -277,9 +261,7 @@ class Light {
      * @description Display a specific tab.
      *
      * @example showTab('colorLightContainer');
-     * @author Jan Kaiser
      * @param {string} tabName - Name of the tab to display.
-     * @memberof Light
      */
     showTab(tabName) {
         const tabs = document.getElementsByClassName('tab');
@@ -296,9 +278,7 @@ class Light {
      * @description Creates the config to update the light.
      *
      * @example updateLight(true);
-     * @author Jan Kaiser
      * @param {boolean} color - Indicates whether the color or the white light should be updated.
-     * @memberof Light
      */
     async updateLight(color) {
         const hsv = this.RGBtoHSV(parseInt(document.getElementById('rVal').value, 10), parseInt(document.getElementById('gVal').value, 10), parseInt(document.getElementById('bVal').value, 10));
@@ -325,9 +305,7 @@ class Light {
      * @description update the gui whenever a server response is received
      *
      * @example updateGui({ 'smartlife.iot.smartbulb.lightingservice': { transition_light_state: { on_off: 1, transition_period: 0 } } });
-     * @author Jan Kaiser
      * @param {Object} response - Object from the tplink-lightbulb service.
-     * @memberof Light
      */
     updateGui(response) {
         let colorTemp = (response.color_temp !== undefined) ? response.color_temp : response.dft_on_state.color_temp;
@@ -382,8 +360,6 @@ class Light {
      * @description send an info-request to the light
      *
      * @example updateGuiRequest();
-     * @author Jan Kaiser
-     * @memberof Light
      */
     async updateGuiRequest() {
         const data = await (await fetch(`${this.url}/info`)).json();

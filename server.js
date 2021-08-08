@@ -39,7 +39,7 @@ app.get('/api/light/info', (req, res) => {
         .then((info) => {
             res.status(200).send(info);
         })
-        .catch(e => console.error(e));
+        .catch((e) => console.error(e));
 });
 
 /*turn power on/off*/
@@ -48,7 +48,7 @@ app.get('/api/light/power', (req, res) => {
         .then((info) => {
             const state = (info.light_state.on_off === 1);
             light.power(!state)
-                .then(status => res.status(200).send(status))
+                .then((status) => res.status(200).send(status))
                 .catch((err) => {
                     console.error(err);
                     res.status(500).send('Oops, Something went wrong!');
