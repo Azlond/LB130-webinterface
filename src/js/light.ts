@@ -138,8 +138,12 @@ function initColorPicker(refs: DomRefs): void {
   });
   image.src = "/images/colorwheel.png";
 
-  canvas.addEventListener("mouseenter", () => { mouseInCanvas = true; });
-  canvas.addEventListener("mouseleave", () => { mouseInCanvas = false; });
+  canvas.addEventListener("mouseenter", () => {
+    mouseInCanvas = true;
+  });
+  canvas.addEventListener("mouseleave", () => {
+    mouseInCanvas = false;
+  });
   canvas.addEventListener("mousemove", (e) => {
     const rect = canvas.getBoundingClientRect();
     const pixel = ctx.getImageData(e.clientX - rect.left, e.clientY - rect.top, 1, 1).data;
@@ -185,8 +189,12 @@ window.addEventListener("load", () => {
   });
 
   for (const slider of [refs.brightnessSlider, refs.colorTempSlider]) {
-    slider.addEventListener("pointerdown", () => { sliderActive = true; });
-    slider.addEventListener("pointerup", () => { sliderActive = false; });
+    slider.addEventListener("pointerdown", () => {
+      sliderActive = true;
+    });
+    slider.addEventListener("pointerup", () => {
+      sliderActive = false;
+    });
   }
 
   let brightnessTimer: ReturnType<typeof setTimeout> | undefined;
@@ -205,8 +213,12 @@ window.addEventListener("load", () => {
     colorTempTimer = setTimeout(() => updateLight(false, refs), 250);
   });
 
-  document.getElementById("whiteLightButton")!.addEventListener("click", () => showTab("whiteLightContainer"));
-  document.getElementById("colorLightButton")!.addEventListener("click", () => showTab("colorLightContainer"));
+  document
+    .getElementById("whiteLightButton")!
+    .addEventListener("click", () => showTab("whiteLightContainer"));
+  document
+    .getElementById("colorLightButton")!
+    .addEventListener("click", () => showTab("colorLightContainer"));
 
   initColorPicker(refs);
   refresh();

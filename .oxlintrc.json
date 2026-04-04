@@ -5,7 +5,9 @@
     "correctness": "error",
     "suspicious": "warn"
   },
-  "rules": {},
+  "rules": {
+    "oxc/no-async-endpoint-handlers": "off"
+  },
   "env": {
     "builtin": true,
     "browser": true,
