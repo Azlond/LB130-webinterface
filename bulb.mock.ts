@@ -19,20 +19,30 @@ const state: BulbState = {
   brightness: 80,
 };
 
+/**
+ * Encrypt a string using the TP-Link autokey XOR cipher.
+ * Each byte is XORed with the current key; the encrypted byte becomes the next key.
+ */
 function encrypt(str: string, key = 0xab): Buffer {
   const buf = Buffer.from(str);
+  // i is always within bounds: loop condition is i < buf.length
   for (let i = 0; i < buf.length; i++) {
-    const c = buf[i];
+    const c = buf[i]!;
     buf[i] = c ^ key;
-    key = buf[i];
+    key = buf[i]!;
   }
   return buf;
 }
 
+/**
+ * Decrypt a buffer using the TP-Link autokey XOR cipher.
+ * Each byte is XORed with the current key; the original (pre-encryption) byte becomes the next key.
+ */
 function decrypt(buf: Buffer, key = 0xab): string {
   const out = Buffer.from(buf);
+  // i is always within bounds: loop condition is i < out.length
   for (let i = 0; i < out.length; i++) {
-    const c = out[i];
+    const c = out[i]!;
     out[i] = c ^ key;
     key = c;
   }
@@ -47,7 +57,7 @@ function send(server: ReturnType<typeof createSocket>, data: unknown, rinfo: Rem
 function lightState(): LightState {
   const { on_off, hue, saturation, color_temp, brightness } = state;
   const dft_on_state = { mode: "normal", hue, saturation, color_temp, brightness };
-  return on_off
+  return on_off === 1
     ? { on_off, mode: "normal", hue, saturation, color_temp, brightness, dft_on_state }
     : { on_off: 0, dft_on_state };
 }
@@ -84,7 +94,13 @@ server.on("message", (msg: Buffer, rinfo: RemoteInfo) => {
     | undefined;
 
   if (svc?.transition_light_state) {
-    Object.assign(state, svc.transition_light_state);
+    const t = svc.transition_light_state;
+    if (t.on_off !== undefined) state.on_off = t.on_off;
+    if (t.hue !== undefined) state.hue = t.hue;
+    if (t.saturation !== undefined) state.saturation = t.saturation;
+    if (t.color_temp !== undefined) state.color_temp = t.color_temp;
+    if (t.brightness !== undefined) state.brightness = t.brightness;
+
     send(server, {
       "smartlife.iot.smartbulb.lightingservice": {
         transition_light_state: { ...state, err_code: 0 },

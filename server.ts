@@ -21,73 +21,96 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+const SCAN_TIMEOUT_MS = 10_000;
+
 /*scan for new bulbs*/
 app.get("/api/light/scan", (_req: Request, res: Response) => {
-  const scan = Bulb.scan().on("light", (l) => {
-    l.power(false).then((status: unknown) => {
-      scan.stop();
-      res.status(200).send(status);
-    });
-  });
-});
+  const scan = Bulb.scan();
+  const timeout = setTimeout(() => {
+    scan.stop();
+    res.status(404).send("No bulbs found");
+  }, SCAN_TIMEOUT_MS);
 
-/*request & return current info*/
-app.get("/api/light/info", (_req: Request, res: Response) => {
-  light
-    .info()
-    .then((info) => {
-      res.status(200).send(info);
-    })
-    .catch((e: unknown) => console.error(e));
-});
-
-/*turn power on/off*/
-app.get("/api/light/power", (_req: Request, res: Response) => {
-  light.info().then((info) => {
-    const state = info.light_state.on_off === 1;
-    light
-      .power(!state)
-      .then((status) => res.status(200).send(status))
+  scan.on("light", (l) => {
+    l.power(false)
+      .then((status: unknown) => {
+        clearTimeout(timeout);
+        scan.stop();
+        res.status(200).send(status);
+      })
       .catch((err: unknown) => {
+        clearTimeout(timeout);
+        scan.stop();
         console.error(err);
         res.status(500).send("Oops, Something went wrong!");
       });
   });
 });
 
+/*request & return current info*/
+app.get("/api/light/info", async (_req: Request, res: Response) => {
+  try {
+    const info = await light.info();
+    res.status(200).send(info);
+  } catch (e: unknown) {
+    console.error(e);
+    res.status(500).send("Oops, Something went wrong!");
+  }
+});
+
+/*turn power on/off*/
+app.get("/api/light/power", async (_req: Request, res: Response) => {
+  try {
+    const info = await light.info();
+    const status = await light.power(info.light_state.on_off !== 1);
+    res.status(200).send(status);
+  } catch (err: unknown) {
+    console.error(err);
+    res.status(500).send("Oops, Something went wrong!");
+  }
+});
+
 /*set the light to the received mode*/
-app.post("/api/light/mode", (req: Request, res: Response) => {
-  const settings = req.body as Record<string, string>;
+app.post("/api/light/mode", async (req: Request, res: Response) => {
+  const body = req.body as Record<string, unknown>;
+  const hue = parseInt(String(body.hue), 10);
+  const saturation = parseInt(String(body.saturation), 10);
+  const color_temp = parseInt(String(body.color_temp), 10);
+  const brightness = parseInt(String(body.brightness), 10);
+
+  if ([hue, saturation, color_temp, brightness].some(Number.isNaN)) {
+    res.status(400).send("Invalid body: hue, saturation, color_temp and brightness must be numbers");
+    return;
+  }
+
   const msg = {
     "smartlife.iot.smartbulb.lightingservice": {
       transition_light_state: {
         ignore_default: 1,
         on_off: 1,
         transition_period: 0,
-        mode: settings.mode,
-        hue: parseInt(settings.hue, 10),
-        saturation: parseInt(settings.saturation, 10),
-        color_temp: parseInt(settings.color_temp, 10),
-        brightness: parseInt(settings.brightness, 10),
+        mode: String(body.mode ?? "normal"),
+        hue,
+        saturation,
+        color_temp,
+        brightness,
       },
     },
   };
-  light
-    .send(msg)
-    .then((s) => {
-      res.status(200).send(s);
-    })
-    .catch((err: unknown) => {
-      console.error(err);
-      res.status(500).send("Oops, Something went wrong!");
-    });
+
+  try {
+    const s = await light.send(msg);
+    res.status(200).send(s);
+  } catch (err: unknown) {
+    console.error(err);
+    res.status(500).send("Oops, Something went wrong!");
+  }
 });
 
 app.get("/", (_req: Request, res: Response) => {
   res.status(200).sendFile(join(__dirname, "dist", "index.html"));
 });
 
-// Express route for any other unrecognised incoming requests
 app.get("/api/*path", (_req: Request, res: Response) => {
   res.status(404).send("Unrecognised API call");
 });
@@ -95,12 +118,11 @@ app.get("*path", (_req: Request, res: Response) => {
   res.status(404).send("Unrecognised path");
 });
 
-// Express route to handle errors
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
   res.status(500).send("Oops, Something went wrong!");
 });
 
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 app.listen(PORT);
 console.log(`Server running at http://localhost:${PORT}`);
