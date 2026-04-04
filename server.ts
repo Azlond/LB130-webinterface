@@ -5,7 +5,7 @@ import Bulb from "tplink-lightbulb";
 import config from "./config.json" with { type: "json" };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const light = new Bulb(config.bulb);
+const light = new Bulb(process.env.BULB_IP ?? config.bulb);
 
 const app = express();
 

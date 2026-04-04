@@ -1,0 +1,10 @@
+services:
+  smart-bulb:
+    build: .
+    # network_mode: host  # uncomment on Linux for direct LAN access to the bulb
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: "${PORT:-3000}"
+      BULB_IP: "${BULB_IP:-host.docker.internal}"
+    restart: unless-stopped
