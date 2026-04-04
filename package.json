@@ -2,7 +2,7 @@
   "name": "smart-bulb",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "server.ts",
   "type": "module",
   "author": "Sintho",
   "license": "SEE LICENSE IN LICENSE",
@@ -13,15 +13,19 @@
   "devDependencies": {
     "oxlint": "^1.58.0",
     "oxfmt": "^0.43.0",
-    "vite": "^8.0.3"
+    "vite": "^8.0.3",
+    "typescript": "^6.0.2",
+    "@types/node": "^25.5.2",
+    "@types/express": "^5.0.6"
   },
   "scripts": {
     "build": "vite build",
     "dev": "vite",
     "preview": "vite preview",
-    "start": "node server.js",
-    "mock": "node bulb.mock.js",
-    "lint": "oxlint src index.html server.js bulb.mock.js",
-    "format": "oxfmt src index.html server.js bulb.mock.js"
+    "start": "node server.ts",
+    "mock": "node bulb.mock.ts",
+    "typecheck": "tsc",
+    "lint": "oxlint src index.html server.ts bulb.mock.ts",
+    "format": "oxfmt src index.html server.ts bulb.mock.ts"
   }
 }

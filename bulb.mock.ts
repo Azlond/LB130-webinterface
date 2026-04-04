@@ -1,8 +1,17 @@
-import { createSocket } from "dgram";
+import { createSocket, type RemoteInfo } from "node:dgram";
+import type { LightState } from "tplink-lightbulb";
 
 const PORT = 9999;
 
-const state = {
+interface BulbState {
+  on_off: 0 | 1;
+  hue: number;
+  saturation: number;
+  color_temp: number;
+  brightness: number;
+}
+
+const state: BulbState = {
   on_off: 1,
   hue: 120,
   saturation: 75,
@@ -10,7 +19,7 @@ const state = {
   brightness: 80,
 };
 
-function encrypt(str, key = 0xab) {
+function encrypt(str: string, key = 0xab): Buffer {
   const buf = Buffer.from(str);
   for (let i = 0; i < buf.length; i++) {
     const c = buf[i];
@@ -20,7 +29,7 @@ function encrypt(str, key = 0xab) {
   return buf;
 }
 
-function decrypt(buf, key = 0xab) {
+function decrypt(buf: Buffer, key = 0xab): string {
   const out = Buffer.from(buf);
   for (let i = 0; i < out.length; i++) {
     const c = out[i];
@@ -30,12 +39,12 @@ function decrypt(buf, key = 0xab) {
   return out.toString("utf8");
 }
 
-function send(server, data, rinfo) {
+function send(server: ReturnType<typeof createSocket>, data: unknown, rinfo: RemoteInfo): void {
   const buf = encrypt(JSON.stringify(data));
   server.send(buf, 0, buf.length, rinfo.port, rinfo.address);
 }
 
-function lightState() {
+function lightState(): LightState {
   const { on_off, hue, saturation, color_temp, brightness } = state;
   const dft_on_state = { mode: "normal", hue, saturation, color_temp, brightness };
   return on_off
@@ -45,46 +54,42 @@ function lightState() {
 
 const server = createSocket("udp4");
 
-server.on("message", (msg, rinfo) => {
-  let cmd;
+server.on("message", (msg: Buffer, rinfo: RemoteInfo) => {
+  let cmd: Record<string, unknown>;
   try {
-    cmd = JSON.parse(decrypt(msg));
+    cmd = JSON.parse(decrypt(msg)) as Record<string, unknown>;
   } catch {
     return;
   }
 
   console.log(`[mock] ${rinfo.address}:${rinfo.port} →`, JSON.stringify(cmd));
 
-  if (cmd.system?.get_sysinfo !== undefined) {
-    send(
-      server,
-      {
-        system: {
-          get_sysinfo: {
-            model: "LB130(UN)",
-            mic_type: "IOT.SMARTBULB",
-            alias: "Mock LB130",
-            light_state: lightState(),
-          },
+  const sys = cmd.system as Record<string, unknown> | undefined;
+  if (sys?.get_sysinfo !== undefined) {
+    send(server, {
+      system: {
+        get_sysinfo: {
+          model: "LB130(UN)",
+          mic_type: "IOT.SMARTBULB",
+          alias: "Mock LB130",
+          light_state: lightState(),
         },
       },
-      rinfo,
-    );
+    }, rinfo);
     return;
   }
 
-  const svc = cmd["smartlife.iot.smartbulb.lightingservice"];
+  const svc = cmd["smartlife.iot.smartbulb.lightingservice"] as
+    | { transition_light_state?: Partial<BulbState> }
+    | undefined;
+
   if (svc?.transition_light_state) {
     Object.assign(state, svc.transition_light_state);
-    send(
-      server,
-      {
-        "smartlife.iot.smartbulb.lightingservice": {
-          transition_light_state: { ...state, err_code: 0 },
-        },
+    send(server, {
+      "smartlife.iot.smartbulb.lightingservice": {
+        transition_light_state: { ...state, err_code: 0 },
       },
-      rinfo,
-    );
+    }, rinfo);
     return;
   }
 
