@@ -76,16 +76,20 @@ server.on("message", (msg: Buffer, rinfo: RemoteInfo) => {
 
   const sys = cmd.system as Record<string, unknown> | undefined;
   if (sys?.get_sysinfo !== undefined) {
-    send(server, {
-      system: {
-        get_sysinfo: {
-          model: "LB130(UN)",
-          mic_type: "IOT.SMARTBULB",
-          alias: "Mock LB130",
-          light_state: lightState(),
+    send(
+      server,
+      {
+        system: {
+          get_sysinfo: {
+            model: "LB130(UN)",
+            mic_type: "IOT.SMARTBULB",
+            alias: "Mock LB130",
+            light_state: lightState(),
+          },
         },
       },
-    }, rinfo);
+      rinfo,
+    );
     return;
   }
 
@@ -101,11 +105,15 @@ server.on("message", (msg: Buffer, rinfo: RemoteInfo) => {
     if (t.color_temp !== undefined) state.color_temp = t.color_temp;
     if (t.brightness !== undefined) state.brightness = t.brightness;
 
-    send(server, {
-      "smartlife.iot.smartbulb.lightingservice": {
-        transition_light_state: { ...state, err_code: 0 },
+    send(
+      server,
+      {
+        "smartlife.iot.smartbulb.lightingservice": {
+          transition_light_state: { ...state, err_code: 0 },
+        },
       },
-    }, rinfo);
+      rinfo,
+    );
     return;
   }
 

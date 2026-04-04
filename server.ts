@@ -44,7 +44,9 @@ app.post("/api/light/mode", async (req: Request, res: Response) => {
   const brightness = parseInt(String(body.brightness), 10);
 
   if ([hue, saturation, color_temp, brightness].some(Number.isNaN)) {
-    res.status(400).send("Invalid body: hue, saturation, color_temp and brightness must be numbers");
+    res
+      .status(400)
+      .send("Invalid body: hue, saturation, color_temp and brightness must be numbers");
     return;
   }
 

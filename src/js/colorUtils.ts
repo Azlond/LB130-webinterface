@@ -8,19 +8,45 @@ import colorTempToHex from "./ColorTempHex";
  * @returns RGB values each in range [0, 255]
  */
 export function HSVtoRGB(h: number, s: number, v: number): { r: number; g: number; b: number } {
-  let r = 0, g = 0, b = 0;
+  let r = 0,
+    g = 0,
+    b = 0;
   const i = Math.floor(h * 6);
   const f = h * 6 - i;
   const p = v * (1 - s);
   const q = v * (1 - f * s);
   const t = v * (1 - (1 - f) * s);
   switch (i % 6) {
-    case 0: r = v; g = t; b = p; break;
-    case 1: r = q; g = v; b = p; break;
-    case 2: r = p; g = v; b = t; break;
-    case 3: r = p; g = q; b = v; break;
-    case 4: r = t; g = p; b = v; break;
-    case 5: r = v; g = p; b = q; break;
+    case 0:
+      r = v;
+      g = t;
+      b = p;
+      break;
+    case 1:
+      r = q;
+      g = v;
+      b = p;
+      break;
+    case 2:
+      r = p;
+      g = v;
+      b = t;
+      break;
+    case 3:
+      r = p;
+      g = q;
+      b = v;
+      break;
+    case 4:
+      r = t;
+      g = p;
+      b = v;
+      break;
+    case 5:
+      r = v;
+      g = p;
+      b = q;
+      break;
   }
   return {
     r: Math.round(r * 255),
@@ -45,17 +71,28 @@ export function RGBtoHSV(r: number, g: number, b: number): { h: number; s: numbe
   let h = 0;
 
   switch (max) {
-    case min: h = 0; break;
-    case r: h = (g - b + d * (g < b ? 6 : 0)) / (6 * d); break;
-    case g: h = (b - r + d * 2) / (6 * d); break;
-    case b: h = (r - g + d * 4) / (6 * d); break;
+    case min:
+      h = 0;
+      break;
+    case r:
+      h = (g - b + d * (g < b ? 6 : 0)) / (6 * d);
+      break;
+    case g:
+      h = (b - r + d * 2) / (6 * d);
+      break;
+    case b:
+      h = (r - g + d * 4) / (6 * d);
+      break;
   }
 
   return { h, s, v };
 }
 
+function clamp(v: number) {
+  return Math.max(0, Math.min(255, Math.round(v)));
+}
+
 export function rgbToHex(r: number, g: number, b: number): string {
-  const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
   return `#${((1 << 24) + (clamp(r) << 16) + (clamp(g) << 8) + clamp(b)).toString(16).slice(1)}`;
 }
 
