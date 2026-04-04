@@ -26,6 +26,7 @@ interface DomRefs {
 const url = "/api/light";
 let tabsHidden = true;
 let mouseInCanvas = false;
+let sliderActive = false;
 
 function getSvgElement(objectId: string, elementId: string): HTMLElement {
   const obj = document.getElementById(objectId) as HTMLObjectElement | null;
@@ -66,13 +67,15 @@ function updateGui(response: LightState, refs: DomRefs): void {
 
   /* if color light is currently set, LB130 returns 0. Using value for 2500 to initialize it to _something_ */
   colorTemp = colorTemp === 0 ? 2500 : colorTemp;
-  refs.colorTempBox.value = String(colorTemp);
-  refs.colorTempSlider.value = String(colorTemp);
-  refs.colorTempLight.style.fill = getColorHex(colorTemp);
-
   const brightness = response.brightness ?? response.dft_on_state?.brightness ?? 0;
-  refs.brightnessBox.value = `${brightness}%`;
-  refs.brightnessSlider.value = String(brightness);
+
+  if (!sliderActive) {
+    refs.colorTempBox.value = String(colorTemp);
+    refs.colorTempSlider.value = String(colorTemp);
+    refs.brightnessBox.value = `${brightness}%`;
+    refs.brightnessSlider.value = String(brightness);
+  }
+  refs.colorTempLight.style.fill = getColorHex(colorTemp);
   refs.brightnessLight.style.fill = `rgba(255, 255, 0, ${brightness / 100})`;
 
   if (!mouseInCanvas) {
@@ -180,6 +183,11 @@ window.addEventListener("load", () => {
     await fetch(`${url}/power`);
     refresh();
   });
+
+  for (const slider of [refs.brightnessSlider, refs.colorTempSlider]) {
+    slider.addEventListener("pointerdown", () => { sliderActive = true; });
+    slider.addEventListener("pointerup", () => { sliderActive = false; });
+  }
 
   let brightnessTimer: ReturnType<typeof setTimeout> | undefined;
   refs.brightnessSlider.addEventListener("input", () => {

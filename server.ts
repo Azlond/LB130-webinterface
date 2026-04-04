@@ -9,43 +9,8 @@ const light = new Bulb(process.env.BULB_IP ?? config.bulb);
 
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 app.use(express.static(join(__dirname, "dist")));
-
-app.use((_req: Request, res: Response, next: NextFunction) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
-const SCAN_TIMEOUT_MS = 10_000;
-
-/*scan for new bulbs*/
-app.get("/api/light/scan", (_req: Request, res: Response) => {
-  const scan = Bulb.scan();
-  const timeout = setTimeout(() => {
-    scan.stop();
-    res.status(404).send("No bulbs found");
-  }, SCAN_TIMEOUT_MS);
-
-  scan.on("light", (l) => {
-    l.power(false)
-      .then((status: unknown) => {
-        clearTimeout(timeout);
-        scan.stop();
-        res.status(200).send(status);
-      })
-      .catch((err: unknown) => {
-        clearTimeout(timeout);
-        scan.stop();
-        console.error(err);
-        res.status(500).send("Oops, Something went wrong!");
-      });
-  });
-});
 
 /*request & return current info*/
 app.get("/api/light/info", async (_req: Request, res: Response) => {
@@ -105,10 +70,6 @@ app.post("/api/light/mode", async (req: Request, res: Response) => {
     console.error(err);
     res.status(500).send("Oops, Something went wrong!");
   }
-});
-
-app.get("/", (_req: Request, res: Response) => {
-  res.status(200).sendFile(join(__dirname, "dist", "index.html"));
 });
 
 app.get("/api/*path", (_req: Request, res: Response) => {

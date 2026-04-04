@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #1a1a1a;
+  background-color: var(--bg-dark);
   border-radius: 10px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
   overflow: hidden;
@@ -30,7 +30,7 @@
   width: 100%;
   max-width: 300px;
   padding: 8px;
-  background: #111;
+  background: var(--bg-input);
   border-radius: 6px;
   box-sizing: border-box;
 }
@@ -43,7 +43,7 @@
 }
 
 .controls label {
-  color: #777;
+  color: var(--text-muted);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -51,10 +51,10 @@
 }
 
 .controls > div input {
-  background-color: #1e1e1e;
-  border: 1px solid #2e2e2e;
+  background-color: var(--bg-darker);
+  border: 1px solid var(--border-subtle);
   border-radius: 4px;
-  color: #ddd;
+  color: var(--text-dim);
   font-family: monospace;
   font-size: 11px;
   height: 24px;
@@ -68,5 +68,5 @@
 
 .controls > div input:focus {
   outline: none;
-  border-color: #555;
+  border-color: var(--focus-border);
 }
