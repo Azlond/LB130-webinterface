@@ -69,6 +69,6 @@ const colorTempToHex = {
   8800: "#D4E0FF",
   8900: "#D3DFFF",
   9000: "#D2DFFF",
-};
+} as const;
 
 export default colorTempToHex;
