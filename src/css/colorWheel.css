@@ -1,48 +1,56 @@
-#colorWheel {
-  margin: 20px auto;
-  width: 600px;
-}
-
 .colorpicker {
   display: flex;
   flex-direction: row;
-  background-color: #222;
-  border-radius: 5px;
-  box-shadow: 2px 2px 2px #444;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   color: #fff;
   font-size: 12px;
+  overflow: hidden;
 }
 
 #picker {
   cursor: crosshair;
   margin: 10px;
   border: 0;
+  border-radius: 4px;
   flex-shrink: 0;
+  display: block;
 }
 
 .controls {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 5px;
+  gap: 6px;
+  padding: 12px 12px 12px 4px;
 }
 
 .controls > div {
   display: flex;
   align-items: center;
-  border: 1px solid #2f2f2f;
-  margin-bottom: 5px;
-  padding: 5px;
-  gap: 6px;
+  gap: 8px;
+  background: #2a2a2a;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.controls label {
+  color: #999;
+  min-width: 28px;
+  text-align: right;
+  font-size: 11px;
+  letter-spacing: 0.05em;
 }
 
 .controls > div input {
-  background-color: #121212;
-  border: 1px solid #2f2f2f;
+  background-color: #111;
+  border: 1px solid #383838;
+  border-radius: 3px;
   color: #ddd;
-  font-size: 10px;
-  height: 14px;
+  font-size: 11px;
+  height: 18px;
   text-align: center;
   text-transform: uppercase;
-  width: 75px;
+  width: 72px;
 }

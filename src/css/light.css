@@ -1,19 +1,37 @@
+:root {
+  --gold: #c49a0a;
+  --gold-dim: #8a6c07;
+  --bg: #3a3a3a;
+  --bg-card: #444;
+  --bg-dark: #2a2a2a;
+  --text-light: #eee;
+  --green: #5a9e42;
+  --green-dark: #3d7a28;
+  --red: #c0391a;
+  --red-dark: #962b13;
+  --blue: #4e6a9e;
+  --blue-dark: #3a5283;
+  --radius: 8px;
+  --tab-height: 64px;
+}
+
+/* Base */
+
 html,
 body {
   height: 100%;
   margin: 0;
-  background-color: dimgrey;
-  text-align: center;
+  background-color: var(--bg);
+  font-family: "Droid Serif", serif;
+  color: var(--text-light);
 }
 
 h1 {
-  color: #b48608;
-  font-family: "Droid serif", serif;
-  font-size: 45px;
+  color: var(--gold);
+  font-size: 2rem;
   font-weight: 400;
   font-style: italic;
-  line-height: 44px;
-  margin: 0 0 12px;
+  margin: 16px 0;
 }
 
 /* IEC power symbol font */
@@ -34,85 +52,89 @@ h1 {
 .iec_power {
   font-family: "iec_symbols_unicoderegular";
   font-style: normal;
+  line-height: 1;
 }
 
-/* Power button */
-
-.powerButtonGreen,
-.powerButtonRed {
-  display: inline-block;
-  cursor: pointer;
-  color: #ffffff;
-  font-family: Arial, sans-serif;
-  font-size: 50px;
-  font-weight: bold;
-  padding: 6px 12px;
-  width: 200px;
-  border: 1px solid;
-}
-
-.powerButtonGreen:active,
-.powerButtonRed:active {
-  position: relative;
-  top: 1px;
-}
-
-.powerButtonGreen {
-  box-shadow: inset 0 1px 0 0 #9acc85;
-  background: linear-gradient(to bottom, #74ad5a 5%, #68a54b 100%);
-  border-color: #3b6e22;
-}
-
-.powerButtonGreen:hover {
-  background: linear-gradient(to bottom, #68a54b 5%, #74ad5a 100%);
-}
-
-.powerButtonRed {
-  box-shadow: inset 0 1px 0 0 #cf866c;
-  background: linear-gradient(to bottom, #d0451b 5%, #bc3315 100%);
-  border-color: #942911;
-  border-radius: 3px;
-}
-
-.powerButtonRed:hover {
-  background: linear-gradient(to bottom, #bc3315 5%, #d0451b 100%);
-}
-
-/* Tabs */
+/* Tab bar */
 
 #tabs {
   display: none;
   flex-direction: row;
   width: 100%;
-  height: 80px;
+  height: var(--tab-height);
+  background-color: var(--bg-dark);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .tabButton {
-  box-shadow: inset 0 1px 0 0 #7a8eb9;
-  background: linear-gradient(to bottom, #637aad 5%, #5972a7 100%);
-  border: 1px solid #314179;
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
   cursor: pointer;
-  font-size: 40px;
-  padding: 6px 12px;
-  width: 100%;
-  color: #b48608;
-  font-family: "Droid serif", serif;
+  color: var(--gold-dim);
+  font-family: "Droid Serif", serif;
+  font-size: 1.4rem;
   font-style: italic;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s;
 }
 
 .tabButton:hover {
-  background: linear-gradient(to bottom, #5972a7 5%, #637aad 100%);
+  color: var(--gold);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom-color: var(--gold-dim);
 }
 
 .tabButton:active {
-  position: relative;
-  top: 1px;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-/* Container */
+/* Power button — sits in the tab bar */
+
+.powerButtonGreen,
+.powerButtonRed {
+  flex-shrink: 0;
+  width: var(--tab-height);
+  height: var(--tab-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  font-size: 1.8rem;
+  color: #fff;
+  transition:
+    filter 0.15s,
+    transform 0.1s;
+}
+
+.powerButtonGreen:hover,
+.powerButtonRed:hover {
+  filter: brightness(1.15);
+}
+
+.powerButtonGreen:active,
+.powerButtonRed:active {
+  transform: scale(0.95);
+}
+
+.powerButtonGreen {
+  background-color: var(--green);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.powerButtonRed {
+  background-color: var(--red);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Main content */
 
 #containerWrapper {
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   padding: 0;
   margin: 0;
@@ -134,77 +156,83 @@ h1 {
 }
 
 .spinner > div {
-  width: 18px;
-  height: 18px;
-  background-color: #333;
-  border-radius: 100%;
+  width: 16px;
+  height: 16px;
+  background-color: var(--gold-dim);
+  border-radius: 50%;
   display: inline-block;
   animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 }
 
-.spinner .bounce1 {
-  animation-delay: -0.32s;
-}
-
-.spinner .bounce2 {
-  animation-delay: -0.16s;
-}
+.spinner .bounce1 { animation-delay: -0.32s; }
+.spinner .bounce2 { animation-delay: -0.16s; }
 
 @keyframes sk-bouncedelay {
-  0%,
-  80%,
-  100% {
-    transform: scale(0);
-  }
-  40% {
-    transform: scale(1);
-  }
+  0%, 80%, 100% { transform: scale(0); }
+  40%           { transform: scale(1); }
 }
 
-/* Light tabs */
-
-#whiteLightWrapper,
-#colorLightWrapper {
-  display: inline-flex;
-  flex-direction: row;
-}
+/* Tab content */
 
 #whiteLightContainer,
 #colorLightContainer {
-  display: none;
-  flex-direction: column;
-}
-
-#whiteLightColorTemp,
-#whiteLightBrightness,
-#colorLight,
-#colorWheel {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  padding: 8px 24px 24px;
+  width: 100%;
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
+}
+
+#whiteLightWrapper,
+#colorLightWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  justify-content: center;
 }
 
 #whiteLightColorTemp,
 #whiteLightBrightness,
 #colorLight {
-  width: 400px;
-  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 280px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+#colorLight {
+  justify-content: center;
+}
+
+#colorWheel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 object[type="image/svg+xml"] {
-  width: 100%;
-  height: 100%;
+  width: 180px;
+  height: 180px;
   object-fit: contain;
 }
 
 /* Labels */
 
 .bulbLabel {
-  color: #b48608;
-  font-family: "Droid serif", serif;
-  font-size: 20px;
+  color: var(--gold);
+  font-family: "Droid Serif", serif;
+  font-size: 0.95rem;
   font-weight: 400;
+  text-align: center;
 }
 
 /* Range slider */
@@ -212,24 +240,34 @@ object[type="image/svg+xml"] {
 input[type="range"] {
   appearance: none;
   -webkit-appearance: none;
-  width: 300px;
+  width: 220px;
+  cursor: pointer;
+  background: transparent;
+  accent-color: var(--gold);
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  height: 5px;
-  background: #ddd;
+  height: 4px;
+  background: #1e1e1e;
   border: none;
-  border-radius: 3px;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   border: none;
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
   border-radius: 50%;
-  background: goldenrod;
-  margin-top: -10px;
+  background: var(--gold);
+  margin-top: -8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
 }
 
 input[type="range"]:focus {
@@ -237,32 +275,37 @@ input[type="range"]:focus {
 }
 
 input[type="range"]:focus::-webkit-slider-runnable-track {
-  background: #ccc;
+  background: #888;
 }
 
 input[type="range"]::-moz-range-track {
-  height: 5px;
-  background: #ddd;
+  height: 4px;
+  background: #1e1e1e;
   border: none;
-  border-radius: 3px;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 input[type="range"]::-moz-range-thumb {
   border: none;
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
   border-radius: 50%;
-  background: goldenrod;
+  background: var(--gold);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* Text inputs */
 
 input[type="text"] {
+  border: none;
   border-radius: 50px;
   text-align: center;
-  color: #b48608;
-  font-family: "Droid serif", serif;
-  font-size: 20px;
+  color: var(--gold);
+  font-family: "Droid Serif", serif;
+  font-size: 1rem;
   font-weight: 400;
-  background-color: black;
+  background-color: var(--bg-dark);
+  padding: 4px 12px;
+  width: 140px;
 }
