@@ -134,10 +134,8 @@ h1 {
 /* Main content */
 
 #containerWrapper {
-  display: flex;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
+  display: grid;
+  width: 100%;
 }
 
 /* Loading spinner */
@@ -176,22 +174,26 @@ h1 {
 
 #whiteLightContainer,
 #colorLightContainer {
+  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 8px 24px 24px;
   width: 100%;
+  box-sizing: border-box;
   visibility: hidden;
-  position: absolute;
   pointer-events: none;
+  /* grid-area: 1/1 stacks both tabs in the same cell — no position:absolute needed */
 }
 
 #whiteLightWrapper,
 #colorLightWrapper {
   display: flex;
   flex-direction: row;
-  gap: 32px;
+  flex-wrap: wrap;
+  gap: 24px;
   justify-content: center;
+  width: 100%;
 }
 
 #whiteLightColorTemp,
@@ -201,11 +203,13 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  width: 280px;
+  flex: 1 1 240px;
+  max-width: 320px;
   background: var(--bg-card);
   border-radius: var(--radius);
   padding: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
 }
 
 #colorLight {
@@ -217,11 +221,14 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
-object[type="image/svg+xml"] {
-  width: 180px;
-  height: 180px;
+object[type="image/svg+xml"],
+svg {
+  width: min(180px, 100%);
+  height: auto;
   object-fit: contain;
 }
 
@@ -240,7 +247,8 @@ object[type="image/svg+xml"] {
 input[type="range"] {
   appearance: none;
   -webkit-appearance: none;
-  width: 220px;
+  width: 100%;
+  max-width: 260px;
   cursor: pointer;
   background: transparent;
   accent-color: var(--gold);
@@ -307,5 +315,7 @@ input[type="text"] {
   font-weight: 400;
   background-color: var(--bg-dark);
   padding: 4px 12px;
-  width: 140px;
+  width: 100%;
+  max-width: 160px;
+  box-sizing: border-box;
 }
