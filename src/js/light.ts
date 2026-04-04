@@ -42,11 +42,13 @@ function enableDisableElements(refs: DomRefs, enable: boolean): void {
 }
 
 function showTab(tabName: string): void {
+  mouseInCanvas = false;
   Array.from(document.getElementsByClassName("tab")).forEach((tab) => {
     const el = tab as HTMLElement;
     const active = el.id === tabName;
     el.style.visibility = active ? "visible" : "hidden";
-    el.style.position = active ? "relative" : "absolute";
+    el.style.height = active ? "" : "0";
+    el.style.overflow = active ? "" : "hidden";
     el.style.pointerEvents = active ? "auto" : "none";
   });
 }
