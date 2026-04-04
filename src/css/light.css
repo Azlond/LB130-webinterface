@@ -4,6 +4,12 @@
   --bg: #3a3a3a;
   --bg-card: #444;
   --bg-dark: #2a2a2a;
+  --bg-darker: #1e1e1e;
+  --bg-input: #111;
+  --border-subtle: #2e2e2e;
+  --text-muted: #777;
+  --text-dim: #ddd;
+  --focus-border: #555;
   --text-light: #eee;
   --green: #5a9e42;
   --green-dark: #3d7a28;
@@ -144,7 +150,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100vw;
+  width: 100%;
   height: 80vh;
 }
 
@@ -256,7 +262,7 @@ input[type="range"] {
 
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
-  background: #1e1e1e;
+  background: var(--bg-darker);
   border: none;
   border-radius: 2px;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
@@ -283,12 +289,12 @@ input[type="range"]:focus {
 }
 
 input[type="range"]:focus::-webkit-slider-runnable-track {
-  background: #888;
+  background: #555;
 }
 
 input[type="range"]::-moz-range-track {
   height: 4px;
-  background: #1e1e1e;
+  background: var(--bg-darker);
   border: none;
   border-radius: 2px;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);

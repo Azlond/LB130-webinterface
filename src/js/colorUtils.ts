@@ -55,7 +55,8 @@ export function RGBtoHSV(r: number, g: number, b: number): { h: number; s: numbe
 }
 
 export function rgbToHex(r: number, g: number, b: number): string {
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+  const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
+  return `#${((1 << 24) + (clamp(r) << 16) + (clamp(g) << 8) + clamp(b)).toString(16).slice(1)}`;
 }
 
 /**
